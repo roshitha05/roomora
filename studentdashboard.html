@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="Browse and reserve available rooms through the Roomora student dashboard."
+  >
+
+  <title>Student Dashboard | Roomora</title>
+
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/ui.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <span class="material-icons">
+          meeting_room
+        </span>
+      </span>
+
+      Roomora
+    </a>
+
+    <nav
+      class="nav-links"
+      aria-label="Student navigation"
+    >
+      <a
+        class="active"
+        href="studentdashboard.html"
+      >
+        Rooms
+      </a>
+
+      <button
+        class="btn btn-secondary"
+        type="button"
+        onclick="logout()"
+      >
+        Log out
+      </button>
+    </nav>
+  </header>
+
+  <main class="dashboard">
+
+    <div class="page-head">
+      <div>
+        <span class="eyebrow">
+          User dashboard
+        </span>
+
+        <h1 style="margin-top: 12px;">
+          Available rooms
+        </h1>
+
+        <p>
+          Choose a space, apply a promo code if you have one,
+          and complete your reservation.
+        </p>
+      </div>
+    </div>
+
+    <section class="stats">
+
+      <div class="stat">
+        <div class="stat-label">
+          Available listings
+        </div>
+
+        <div
+          class="stat-value"
+          id="roomCount"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Promo saving
+        </div>
+
+        <div class="stat-value">
+          10%
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Booking flow
+        </div>
+
+        <div
+          class="stat-value"
+          style="font-size: 22px;"
+        >
+          Instant
+        </div>
+      </div>
+
+    </section>
+
+    <section class="panel">
+
+      <div class="panel-head">
+        <h2>Room directory</h2>
+
+        <span class="pill">
+          Demo availability
+        </span>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Room</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Capacity</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Promo</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody id="room-table-body"></tbody>
+        </table>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    const VALID_PROMO_CODE = "DISCOUNT10";
+
+    const defaultRooms = [
+      {
+        roomNo: "101",
+        location: "Building A",
+        totalPeople: 4,
+        price: 20,
+        status: "Available",
+        registeredDate: "2026-10-01",
+        time: "10:00",
+        reservation: "N",
+        promotionalCode: "DISCOUNT10",
+      },
+      {
+        roomNo: "204",
+        location: "Building B",
+        totalPeople: 6,
+        price: 25,
+        status: "Available",
+        registeredDate: "2026-10-02",
+        time: "14:00",
+        reservation: "N",
+        promotionalCode: "",
+      },
+      {
+        roomNo: "305",
+        location: "Building C",
+        totalPeople: 3,
+        price: 18,
+        status: "Available",
+        registeredDate: "2026-10-03",
+        time: "16:00",
+        reservation: "N",
+        promotionalCode: "DISCOUNT10",
+      },
+    ];
+
+    function initialiseRooms() {
+      const storedRooms =
+        localStorage.getItem("launchedRooms");
+
+      if (!storedRooms) {
+        localStorage.setItem(
+          "launchedRooms",
+          JSON.stringify(defaultRooms)
+        );
+      }
+    }
+
+    function getRooms() {
+      return (
+        JSON.parse(
+          localStorage.getItem("launchedRooms")
+        ) || []
+      );
+    }
+
+    function displayRooms() {
+      const tableBody =
+        document.getElementById("room-table-body");
+
+      const roomCount =
+        document.getElementById("roomCount");
+
+      const rooms = getRooms();
+
+      tableBody.innerHTML = "";
+
+      roomCount.textContent = rooms.length;
+
+      rooms.forEach((room, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>
+            <strong>${room.location}</strong>
+          </td>
+
+          <td>${room.roomNo}</td>
+
+          <td>${room.registeredDate}</td>
+
+          <td>${room.time}</td>
+
+          <td>${room.totalPeople} people</td>
+
+          <td>
+            <strong>
+              $${Number(room.price || 0).toFixed(2)}
+            </strong>
+          </td>
+
+          <td>
+            <span class="pill">
+              ${room.status || "Available"}
+            </span>
+          </td>
+        `;
+
+        const promoCell =
+          document.createElement("td");
+
+        promoCell.className = "promo-wrap";
+
+        const promoInput =
+          document.createElement("input");
+
+        promoInput.type = "text";
+        promoInput.placeholder = "Promo code";
+        promoInput.setAttribute(
+          "aria-label",
+          `Promo code for Room ${room.roomNo}`
+        );
+
+        const applyButton =
+          document.createElement("button");
+
+        applyButton.type = "button";
+        applyButton.textContent = "Apply";
+
+        applyButton.addEventListener(
+          "click",
+          () => {
+            validatePromoCode(promoInput.value);
+          }
+        );
+
+        promoCell.append(
+          promoInput,
+          applyButton
+        );
+
+        row.appendChild(promoCell);
+
+
+        const actionCell =
+          document.createElement("td");
+
+        const bookButton =
+          document.createElement("button");
+
+        bookButton.type = "button";
+        bookButton.className = "book-btn";
+        bookButton.textContent = "Book";
+
+        bookButton.addEventListener(
+          "click",
+          () => {
+            bookRoom(
+              room,
+              promoInput.value
+            );
+          }
+        );
+
+        actionCell.appendChild(bookButton);
+
+        row.appendChild(actionCell);
+
+        tableBody.appendChild(row);
+      });
+    }
+
+    function validatePromoCode(value) {
+      const promoCode =
+        value.trim().toUpperCase();
+
+      if (!promoCode) {
+        alert("Please enter a promo code.");
+        return false;
+      }
+
+      if (promoCode === VALID_PROMO_CODE) {
+        alert(
+          "Promo code applied. You will receive 10% off."
+        );
+
+        return true;
+      }
+
+      alert("Invalid promo code.");
+
+      return false;
+    }
+
+    function bookRoom(room, promoValue) {
+      const promoCode =
+        promoValue.trim().toUpperCase();
+
+      const originalPrice =
+        Number(room.price || 0);
+
+      const promoApplied =
+        promoCode === VALID_PROMO_CODE;
+
+      const finalPrice =
+        promoApplied
+          ? originalPrice * 0.9
+          : originalPrice;
+
+      const bookedRoom = {
+        ...room,
+        originalPrice,
+        finalPrice,
+        promoApplied,
+        bookedAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem(
+        "bookedRoom",
+        JSON.stringify(bookedRoom)
+      );
+
+      saveBooking(bookedRoom);
+
+      location.href = "paymentpage.html";
+    }
+
+    function saveBooking(bookedRoom) {
+      const bookings =
+        JSON.parse(
+          localStorage.getItem("bookings")
+        ) || [];
+
+      bookings.push(bookedRoom);
+
+      localStorage.setItem(
+        "bookings",
+        JSON.stringify(bookings)
+      );
+    }
+
+    function logout() {
+      sessionStorage.removeItem("currentUser");
+
+      location.href = "index.html";
+    }
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        initialiseRooms();
+        displayRooms();
+      }
+    );
+  </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Staff Sign In | Roomora</title>
+
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="css/ui.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <span class="material-icons">meeting_room</span>
+      </span>
+      Roomora
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="Student.html">User</a>
+      <a class="active" href="Admin.html">Staff</a>
+    </nav>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <span class="eyebrow">Staff access</span>
+
+      <h1>Manage your spaces</h1>
+      <p>Sign in to create and maintain room availability.</p>
+
+      <form id="adminLoginForm">
+        <div class="field">
+          <label for="username">Staff username</label>
+          <input
+            id="username"
+            name="username"
+            placeholder="Enter your username"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="pwd"
+            type="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div class="auth-meta">
+          <label>
+            <input type="checkbox">
+            Remember me
+          </label>
+
+          <span>Staff portal</span>
+        </div>
+
+        <button class="btn btn-primary" type="submit">
+          Sign in
+          <span class="material-icons">arrow_forward</span>
+        </button>
+
+        <span id="errorMessage" class="error"></span>
+      </form>
+
+      <div class="demo-note">
+        Demo access:
+        <strong>staff</strong> /
+        <strong>password</strong>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document
+      .getElementById("adminLoginForm")
+      .addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorMessage = document.getElementById("errorMessage");
+
+        errorMessage.textContent = "";
+
+        if (username === "staff" && password === "password") {
+          location.href = "admindashboard.html";
+        } else {
+          errorMessage.textContent =
+            "Incorrect username or password. Please try again.";
+        }
+      });
+  </script>
+</body>
+</html>

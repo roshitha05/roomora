@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="Roomora booking confirmation."
+  >
+
+  <title>Booking Confirmed | Roomora</title>
+
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/ui.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <span class="material-icons">meeting_room</span>
+      </span>
+      Roomora
+    </a>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="confirm-card">
+      <div class="success-icon">
+        <span
+          class="material-icons"
+          style="font-size: 36px;"
+        >
+          check
+        </span>
+      </div>
+
+      <span class="eyebrow">
+        Reservation complete
+      </span>
+
+      <h1>Booking confirmed</h1>
+
+      <p>
+        Your room reservation has been completed successfully.
+      </p>
+
+      <div class="receipt">
+        <div class="receipt-row">
+          <span>Room</span>
+          <strong id="room">—</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Location</span>
+          <strong id="location">—</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Date & time</span>
+          <strong id="datetime">—</strong>
+        </div>
+
+        <div class="receipt-row">
+          <span>Amount paid</span>
+          <strong id="amountPaid">$0.00</strong>
+        </div>
+      </div>
+
+      <button
+        class="btn btn-primary"
+        type="button"
+        onclick="location.href='studentdashboard.html'"
+      >
+        <span class="material-icons">arrow_back</span>
+        Back to rooms
+      </button>
+    </section>
+  </main>
+
+  <script>
+    const bookedRoom = JSON.parse(
+      localStorage.getItem("bookedRoom")
+    );
+
+    if (!bookedRoom) {
+      location.href = "index.html";
+    } else {
+      const room = document.getElementById("room");
+      const locationName = document.getElementById("location");
+      const dateTime = document.getElementById("datetime");
+      const amountPaid = document.getElementById("amountPaid");
+
+      room.textContent = bookedRoom.roomNo || "—";
+      locationName.textContent = bookedRoom.location || "—";
+
+      dateTime.textContent =
+        `${bookedRoom.registeredDate || "—"} · ` +
+        `${bookedRoom.time || "—"}`;
+
+      const finalPrice =
+        bookedRoom.finalPrice ??
+        bookedRoom.price ??
+        0;
+
+      amountPaid.textContent =
+        `$${Number(finalPrice).toFixed(2)}`;
+    }
+  </script>
+</body>
+</html>

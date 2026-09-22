@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="Student access portal for the Roomora room booking application."
+  >
+
+  <title>Student Sign In | Roomora</title>
+
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/ui.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <span class="material-icons">meeting_room</span>
+      </span>
+      Roomora
+    </a>
+
+    <nav
+      class="nav-links"
+      aria-label="Main navigation"
+    >
+      <a href="index.html">
+        Home
+      </a>
+
+      <a
+        class="active"
+        href="Student.html"
+      >
+        Student
+      </a>
+
+      <a href="Admin.html">
+        Staff
+      </a>
+    </nav>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <span class="eyebrow">
+        User access
+      </span>
+
+      <h1>Welcome back</h1>
+
+      <p>
+        Sign in to browse and reserve available rooms.
+      </p>
+
+      <form id="studentLoginForm">
+        <div class="field">
+          <label for="username">
+            User username
+          </label>
+
+          <input
+            id="username"
+            name="username"
+            type="text"
+            placeholder="Enter your username"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label for="password">
+            Password
+          </label>
+
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div class="auth-meta">
+          <span>
+            Demo user account
+          </span>
+
+          <span>
+            User portal
+          </span>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          type="submit"
+        >
+          Sign in
+
+          <span class="material-icons">
+            arrow_forward
+          </span>
+        </button>
+
+        <span
+          id="errorMessage"
+          class="error"
+          role="alert"
+          aria-live="polite"
+        ></span>
+      </form>
+
+      <div class="demo-note">
+        Demo access:
+        <strong>user</strong>
+        /
+        <strong>password</strong>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const studentLoginForm =
+      document.getElementById("studentLoginForm");
+
+    studentLoginForm.addEventListener(
+      "submit",
+      (event) => {
+        event.preventDefault();
+
+        const username =
+          document.getElementById("username").value.trim();
+
+        const password =
+          document.getElementById("password").value;
+
+        const errorMessage =
+          document.getElementById("errorMessage");
+
+        errorMessage.textContent = "";
+
+        const validCredentials =
+          username === "student" &&
+          password === "password";
+
+        if (validCredentials) {
+          sessionStorage.setItem(
+            "currentUser",
+            JSON.stringify({
+              username: "student",
+              role: "student",
+            })
+          );
+
+          location.href = "studentdashboard.html";
+          return;
+        }
+
+        errorMessage.textContent =
+          "Incorrect username or password. Please try again.";
+      }
+    );
+  </script>
+</body>
+</html>
